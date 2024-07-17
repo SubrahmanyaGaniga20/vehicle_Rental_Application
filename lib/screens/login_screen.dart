@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:apna_gadi/screens/registration_screen.dart';
 import 'package:apna_gadi/screens/onboarding_screen.dart'; // Import OnboardingScreen
+import 'package:apna_gadi/screens/admin_screen.dart'; // Import AdminScreen
 import 'package:apna_gadi/services/api_service.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -14,16 +15,27 @@ class LoginScreen extends StatelessWidget {
     if (username.isNotEmpty && password.isNotEmpty) {
       try {
         final apiService = ApiService();
-        bool success = await apiService.login(username, password);
-        if (success) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    OnboardingScreen()), // Navigate to OnboardingScreen
-          );
+        Map<String, dynamic> response =
+            await apiService.login(username, password);
+
+        if (response['success']) {
+          if (response['admin']) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      const AdminScreen()), // Navigate to AdminScreen
+            );
+          } else {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      const OnboardingScreen()), // Navigate to OnboardingScreen
+            );
+          }
         } else {
-          _showErrorDialog(context, 'Invalid username or password');
+          _showErrorDialog(context, response['message']);
         }
       } catch (e) {
         _showErrorDialog(context, 'An error occurred: $e');

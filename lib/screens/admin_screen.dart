@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class AdminScreen extends StatelessWidget {
+  const AdminScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -8,9 +10,9 @@ class AdminScreen extends StatelessWidget {
         title: const Text('Admin Dashboard'),
         backgroundColor: Colors.blueAccent,
       ),
-      body: Center(
+      body: const Center(
         child: Text(
-          'Admin Interface Coming Soon...',
+          'Welcome to Admin Interface',
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
       ),

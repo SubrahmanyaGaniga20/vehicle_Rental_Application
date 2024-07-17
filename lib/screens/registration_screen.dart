@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:apna_gadi/screens/login_screen.dart'; // Import your login screen
+import 'package:apna_gadi/screens/login_screen.dart';
+import 'package:apna_gadi/services/api_service.dart'; // Import your API service
 
 class RegistrationScreen extends StatelessWidget {
   final TextEditingController usernameController = TextEditingController();
@@ -7,37 +8,58 @@ class RegistrationScreen extends StatelessWidget {
   final TextEditingController confirmPasswordController =
       TextEditingController();
 
-  void _register(BuildContext context) {
-    // Implement your registration logic here
+  void _register(BuildContext context) async {
     String username = usernameController.text;
     String password = passwordController.text;
     String confirmPassword = confirmPasswordController.text;
 
-    // Example logic: check if passwords match and are not empty
-    if (password == confirmPassword &&
-        username.isNotEmpty &&
-        password.isNotEmpty) {
-      // Simulating successful registration
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => LoginScreen()),
-      );
-    } else {
-      // Show error message if registration fails
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text('Registration Failed'),
-          content: Text('Please make sure all fields are filled correctly.'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text('OK'),
-            ),
-          ],
-        ),
-      );
+    // Validate inputs
+    if (password != confirmPassword) {
+      _showErrorDialog(context, 'Passwords do not match.');
+      return;
     }
+
+    if (username.isEmpty || password.isEmpty) {
+      _showErrorDialog(context, 'Username and password are required.');
+      return;
+    }
+
+    // Create an instance of ApiService
+    final apiService = ApiService();
+
+    try {
+      final success =
+          await apiService.register(username, password, confirmPassword);
+      if (success) {
+        // Registration successful, navigate to login screen
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => LoginScreen()),
+        );
+      } else {
+        // Registration failed
+        _showErrorDialog(context, 'Registration failed. Please try again.');
+      }
+    } catch (e) {
+      // Handle exceptions
+      _showErrorDialog(context, e.toString());
+    }
+  }
+
+  void _showErrorDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Error'),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
