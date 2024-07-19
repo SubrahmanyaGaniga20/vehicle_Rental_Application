@@ -13,6 +13,7 @@ dependencies:
   carousel_slider: ^4.0.0 # Carousel slider package for image carousels
   cupertino_icons: ^1.0.6 # Cupertino icons package for iOS style icons
   http: ^0.13.3 # HTTP package for making network requests (check for the latest version)
+  image_picker: ^1.1.2
 
 dev_dependencies:
   flutter_test:
